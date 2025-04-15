@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - SpringAzureDemo-1
 
 on:
@@ -13,7 +10,7 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +18,8 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
-          distribution: 'microsoft'
+          java-version: '11'
+          distribution: 'temurin'
 
       - name: Build with Maven
         run: mvn clean install
@@ -40,21 +37,21 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
-      - name: Login to Azure
+
+      - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_714809E8E53342F2B18D0BB2DC38A6F5 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0E01CD1CBF6C4B5095FF59171196C88B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CC1F4C00A5454A4391FFC88BA998CABD }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -63,4 +60,3 @@ jobs:
           app-name: 'SpringAzureDemo-1'
           slot-name: 'Production'
           package: '*.jar'
-          
